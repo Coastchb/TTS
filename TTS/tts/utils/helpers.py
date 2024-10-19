@@ -159,13 +159,14 @@ def generate_path(duration, mask):
         - path: :math:`[B, T_en, T_de]`
     """
     b, t_x, t_y = mask.shape
-    cum_duration = torch.cumsum(duration, 1)
+    cum_duration = torch.cumsum(duration, 2).reshape(duration.shape[0], duration.shape[-1])
 
     cum_duration_flat = cum_duration.view(b * t_x)
     path = sequence_mask(cum_duration_flat, t_y).to(mask.dtype)
     path = path.view(b, t_x, t_y)
     path = path - F.pad(path, convert_pad_shape([[0, 0], [1, 0], [0, 0]]))[:, :-1]
     path = path * mask
+
     return path
 
 
