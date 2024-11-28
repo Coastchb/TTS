@@ -234,7 +234,8 @@ class RelativePositionMultiHeadAttention(nn.Module):
         batch, heads, length, _ = x.size()
         # padd along column
         x = F.pad(x, [0, length - 1, 0, 0, 0, 0, 0, 0])
-        x_flat = x.view([batch, heads, length**2 + length * (length - 1)])
+        length_float = torch.tensor(length,dtype=torch.float)
+        x_flat = x.view([batch, heads, (length_float**2 + length_float * (length_float - 1)).to(torch.int64)])
         # add 0's in the beginning that will skew the elements after reshape
         x_flat = F.pad(x_flat, [length, 0, 0, 0, 0, 0])
         x_final = x_flat.view([batch, heads, length, 2 * length])[:, :, :, 1:]
