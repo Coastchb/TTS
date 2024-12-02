@@ -1144,7 +1144,7 @@ class Vits(BaseTTS):
 
         w_ceil = torch.ceil(w)
         y_lengths = torch.clamp_min(torch.sum(w_ceil, [1, 2]), 1).long()
-        y_mask = sequence_mask(y_lengths, int(y_lengths.tolist()[0])).to(x_mask.dtype).unsqueeze(1)  # [B, 1, T_dec]
+        y_mask = sequence_mask(y_lengths, None).to(x_mask.dtype).unsqueeze(1)  # [B, 1, T_dec]
 
         attn_mask = x_mask * y_mask.transpose(1, 2)  # [B, 1, T_enc] * [B, T_dec, 1]
         attn = generate_path(w_ceil, attn_mask.transpose(1, 2))
